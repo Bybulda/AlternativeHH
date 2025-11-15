@@ -1,3 +1,6 @@
+import json
+import os
+
 import httpx
 from fastapi import FastAPI
 
@@ -14,14 +17,11 @@ def root():
     return {"message": "Welcome to Job Aggregator API!"}
 
 
-# TODO: вынести в переменные среды
-HH_API_URL = "https://api.hh.ru/vacancies"
+HH_API_URL = os.environ["HH_API_URL"]
 
 @app.get("/vacs")
 async def get_vacancies_from_hh():
-    headers = {
-        "HH-User-Agent": "api-test-agent"
-    }
+    headers = json.loads(os.environ["HEADERS"])
     async with httpx.AsyncClient() as client:
         response = await client.get(HH_API_URL, headers=headers)
         response.raise_for_status()

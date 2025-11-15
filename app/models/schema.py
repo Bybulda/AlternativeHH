@@ -1,76 +1,90 @@
+from typing import List
+
 import strawberry
 from strawberry.fastapi import GraphQLRouter
-from typing import List
-from app.models.models import Vacancy, Currency
 
-# TODO: тут все для примера, надо будет сделать нормальную версию
+from app.api_integration import get_hh_response
+from app.models.models import Vacancy, Currency, Employer
+
 
 @strawberry.type
-class GraphQLVacancy:
-    id: int
-    title: str
-    company: str
-    area: str
-    salary_from: float
-    salary_to: float
+class GraphQLEmployer:
+    id: str
+    name: str
     url: str
+
+    @classmethod
+    def from_pydantic(cls, employer: Employer):
+        return GraphQLEmployer(id=employer.id, name=employer.name, url=employer.url)
+
 
 @strawberry.type
 class GraphQLCurrency:
-    code: str
-    name: str
-    rate: float
+    code: str | None
+    name: str | None
+
+    @classmethod
+    def from_pydantic(cls, currency: Currency):
+        return GraphQLCurrency(code=currency.code, name=currency.name)
+
+
+@strawberry.type
+class GraphQLVacancy:
+    id: str
+    title: str
+    area: str | None
+    salary_from: str | None
+    salary_to: str | None
+    currency: GraphQLCurrency
+
+    address: str | None
+    employer: GraphQLEmployer
+
+    requirements: str | None
+    responsibility: str | None
+
+    work_format: str | None
+    working_hours: str | None
+
+    role: str | None
+    experience: str | None
+
+    url: str
+
+    @classmethod
+    def from_pydantic(cls, vacancy: Vacancy):
+        return GraphQLVacancy(
+            id=vacancy.id,
+            title=vacancy.title,
+            area=vacancy.area,
+            salary_from=vacancy.salary_from,
+            salary_to=vacancy.salary_to,
+            currency=GraphQLCurrency.from_pydantic(vacancy.currency),
+            address=vacancy.address,
+            employer=GraphQLEmployer.from_pydantic(vacancy.employer),
+            requirements=vacancy.requirements,
+            responsibility=vacancy.responsibility,
+            work_format=vacancy.work_format,
+            working_hours=vacancy.working_hours,
+            role=vacancy.role,
+            experience=vacancy.experience,
+            url=vacancy.url
+        )
+
+    @classmethod
+    def from_pydantic_list(cls, vacancies: List[Vacancy]):
+        return [GraphQLVacancy.from_pydantic(vacancy) for vacancy in vacancies]
+
+
+async def vacancies_resolver() -> List[GraphQLVacancy]:
+    pydantic_response_vacancies = await get_hh_response({})
+    return GraphQLVacancy.from_pydantic_list(pydantic_response_vacancies)
+
 
 @strawberry.type
 class Query:
-    @strawberry.field
-    def vacancy(self, id: int) -> GraphQLVacancy:
-        return GraphQLVacancy(
-            id=id,
-            title="Python Developer",
-            company="Yandex",
-            area="Moscow",
-            salary_from=200000.0,
-            salary_to=300000.0,
-            url="https://hh.ru/vacancy/123456"
-        )
+    vacancies: List[GraphQLVacancy] = strawberry.field(resolver=vacancies_resolver)
 
-    @strawberry.field
-    def vacancies(self) -> List[GraphQLVacancy]:
-        return [
-            GraphQLVacancy(
-                id=1,
-                title="Python Developer",
-                company="Yandex",
-                area="Moscow",
-                salary_from=200000.0,
-                salary_to=300000.0,
-                url="https://hh.ru/vacancy/123456"
-            ),
-            GraphQLVacancy(
-                id=2,
-                title="Backend Engineer",
-                company="VK",
-                area="Remote",
-                salary_from=180000.0,
-                salary_to=250000.0,
-                url="https://hh.ru/vacancy/789012"
-            )
-        ]
-
-    @strawberry.field
-    def currency(self, code: str) -> GraphQLCurrency:
-        if code.upper() == "USD":
-            return GraphQLCurrency(
-                code=code.upper(),
-                name="Доллар США",
-                rate=81.55
-            )
-        return GraphQLCurrency(
-            code=code.upper(),
-            name=f"{code.upper()} (unknown)",
-            rate=0.0
-        )
 
 schema = strawberry.Schema(query=Query)
 

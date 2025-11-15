@@ -26,14 +26,14 @@ def get_vacancy(json: dict) -> Vacancy:
         address=get_save_value_from_dict(json, "address", "raw"),
         employer=Employer(id=get_save_value_from_dict(json, "employer", "id"),
                           name=get_save_value_from_dict(json, "employer", "name"),
-                          url=get_save_value_from_dict(json, "employer", "url")),
+                          url=get_save_value_from_dict(json, "employer", "alternate_url")),
         requirements=get_save_value_from_dict(json, "snippet", "requirement"),
         responsibility=get_save_value_from_dict(json, "snippet", "responsibility"),
         work_format=get_save_value_from_dict(json, "work_format", 0, "name"),
         working_hours=get_save_value_from_dict(json, "working_hours", 0, "name"),
         role=get_save_value_from_dict(json, "professional_roles", 0, "name"),
         experience=get_save_value_from_dict(json, "experience", "name"),
-        url=json["alternative_url"]
+        url=json["alternate_url"]
     )
 
 
