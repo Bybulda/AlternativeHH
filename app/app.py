@@ -1,6 +1,8 @@
 import httpx
 from fastapi import FastAPI
-from schema import graphql_app
+
+from utils.collect_model import get_vacancies_from_request
+from app.models.schema import graphql_app
 
 app = FastAPI(title="Job Aggregator API", version="0.1.0")
 
@@ -23,4 +25,5 @@ async def get_vacancies_from_hh():
     async with httpx.AsyncClient() as client:
         response = await client.get(HH_API_URL, headers=headers)
         response.raise_for_status()
-        return response.json()
+        all_vacancies = get_vacancies_from_request(response.json())
+        return all_vacancies

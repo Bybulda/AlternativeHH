@@ -2,17 +2,36 @@ from pydantic import BaseModel
 from typing import Optional
 
 # TODO: правильно составить модели для парсинга ответа от hh
+class Currency(BaseModel):
+    code: Optional[str] = None
+    name: Optional[str] = None
 
-class Vacancy(BaseModel):
-    id: int
-    title: str
-    company: str
-    area: str
-    salary_from: Optional[float] = None
-    salary_to: Optional[float] = None
+class Employer(BaseModel):
+    id: str
+    name: str
     url: str
 
-class Currency(BaseModel):
-    code: str
-    name: str
-    rate: float
+
+class Vacancy(BaseModel):
+    id: str
+    title: str
+    area: Optional[str] = None
+    salary_from: Optional[float] = None
+    salary_to: Optional[float] = None
+    currency: Currency
+
+    address: Optional[str] = None
+    employer: Employer
+
+    requirements: Optional[str] = None
+    responsibility: Optional[str] = None
+
+    work_format: Optional[str] = None
+    working_hours: Optional[str] = None
+
+    role: Optional[str] = None
+    experience: Optional[str] = None
+
+    url: str
+
+

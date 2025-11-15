@@ -1,7 +1,7 @@
 import strawberry
 from strawberry.fastapi import GraphQLRouter
 from typing import List
-from models.models import Vacancy, Currency
+from app.models.models import Vacancy, Currency
 
 # TODO: тут все для примера, надо будет сделать нормальную версию
 
