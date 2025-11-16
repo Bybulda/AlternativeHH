@@ -3,8 +3,8 @@ from typing import List
 import strawberry
 from strawberry.fastapi import GraphQLRouter
 
-from app.api_integration import get_hh_response
-from app.models.models import Vacancy, Currency, Employer
+from backend.app.api_integration import get_hh_response
+from backend.app.models.models import Vacancy, Currency, Employer
 
 
 @strawberry.type
@@ -76,8 +76,13 @@ class GraphQLVacancy:
         return [GraphQLVacancy.from_pydantic(vacancy) for vacancy in vacancies]
 
 
-async def vacancies_resolver() -> List[GraphQLVacancy]:
-    pydantic_response_vacancies = await get_hh_response({})
+async def vacancies_resolver(text: str = None, only_with_salary: bool = False) -> List[GraphQLVacancy]:
+    params = dict()
+    if text:
+        params["text"] = text
+    if only_with_salary:
+        params["only_with_salary"] = only_with_salary
+    pydantic_response_vacancies = await get_hh_response(params)
     return GraphQLVacancy.from_pydantic_list(pydantic_response_vacancies)
 
 

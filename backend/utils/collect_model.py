@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from app.models.models import Vacancy, Currency, Employer
+from backend.app.models.models import Vacancy, Currency, Employer
 
 
 def get_save_value_from_dict(json: dict, *args: str | int) -> Optional[str | int]:
