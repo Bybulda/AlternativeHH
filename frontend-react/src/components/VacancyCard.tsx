@@ -1,6 +1,7 @@
 // src/components/VacancyCard.tsx
 import React from 'react';
 import { GraphQLVacancy } from '../types/vacancy';
+import CoverLetterWidget from './CoverLetterWidget';
 
 interface Props {
   vacancy: GraphQLVacancy;
@@ -9,14 +10,58 @@ interface Props {
 }
 
 const VacancyCard: React.FC<Props> = ({ vacancy, onOpen, onNext }) => {
+  const renderField = (label: string, value: string | number | null | undefined) => {
+    if (value === null || value === undefined) return null;
+    return (
+      <p style={styles.detail}>
+        <strong>{label}:</strong> {value}
+      </p>
+    );
+  };
+
   return (
     <div style={styles.card}>
-      <h3 style={styles.title}>{vacancy.title}</h3>
-      {vacancy.salary_from && <p style={styles.detail}><strong>Зарплата:</strong> {vacancy.salary_to}</p>}
-      {vacancy.address && <p style={styles.detail}><strong>Город:</strong> {vacancy.address}</p>}
+      {renderField("Название", vacancy.title)}
+      {renderField("Зарплата от", vacancy.salary_from)}
+      {renderField("Адресс", vacancy.address)}
+      {renderField("Название компании", vacancy.employer?.name)}
+      {renderField("Необходимые навыки", vacancy.requirements)}
+      {renderField("Ответственность", vacancy.responsibility)}
+      {renderField("Ссылка", vacancy.url)}
 
       <div style={styles.buttons}>
         <button onClick={onOpen} style={styles.linkButton}>🔗 Открыть вакансию</button>
+        <CoverLetterWidget
+          vacancyTitle={vacancy.title}
+          companyName={vacancy.employer?.name || 'Не указана'}
+          onGenerate={async (userInfo: string) => {
+            // Заглушка для вызова бэкенда.
+            // const response = await fetch('http://localhost:8000/api/generate-cover-letter', {
+            //   method: 'POST',
+            //   headers: { 'Content-Type': 'application/json' },
+            //   body: JSON.stringify({
+            //     vacancy_data: {
+            //       title: vacancy.title,
+            //       company: vacancy.employer?.name || 'Не указана',
+            //       requirements: vacancy.requirements || 'Не указаны',
+            //       // ... другие поля
+            //     },
+            //     user_profile: {
+            //       name: 'Пользователь', // можно брать из профиля
+            //       skills: '...', // навыки из профиля
+            //       experience: '...', // опыт из профиля
+            //       education: '...', // образование из профиля
+            //     },
+            //     user_input: userInfo,
+            //   }),
+            // });
+            // const data = await response.json();
+            // return data.cover_letter;
+
+            // Покафейковый ответ для демонстрации
+            return `Здравствуйте!\n\nМеня заинтересовала вакансия "${vacancy.title}" в компании "${vacancy.employer?.name || 'Не указана'}". ${userInfo}\n\nБуду рад обсудить возможности сотрудничества.`;
+          }}
+        />
         <button onClick={onNext} style={styles.nextButton}>▶ Следующая вакансия</button>
       </div>
     </div>

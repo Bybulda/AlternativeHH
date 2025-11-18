@@ -1,4 +1,3 @@
-// Тип для валюты
 export interface GraphQLCurrency {
   code?: string;
   name?: string;
@@ -6,8 +5,8 @@ export interface GraphQLCurrency {
 
 
 export interface GraphQLEmployer {
-  id: string;
-  name: string;
+  id?: string;
+  name?: string;
   url?: string;
 
 }

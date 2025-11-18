@@ -1,4 +1,3 @@
-// src/App.tsx
 import React from 'react';
 import SearchForm from './components/SearchForm';
 import VacancyCard from './components/VacancyCard';

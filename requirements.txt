@@ -4,3 +4,4 @@ strawberry-graphql[fastapi]
 httpx
 pydantic
 python-multipart
+openai

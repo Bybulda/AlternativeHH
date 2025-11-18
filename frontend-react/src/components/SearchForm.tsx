@@ -1,4 +1,3 @@
-// src/components/SearchForm.tsx
 import React, { useState } from 'react';
 
 interface Props {
@@ -15,7 +14,10 @@ const SearchForm: React.FC<Props> = ({ onSearch, loading }) => {
     { label: 'Роль', value: 'role' },
     { label: 'Минимальная зарплата', value: 'salaryFrom' },
     { label: 'Адресс', value: 'address' },
+    { label: 'Название компании', value: 'employer { name }' },
     { label: 'Ссылка', value: 'url' },
+    { label: 'Требования', value: 'requirements'},
+    { label: 'Ответственность', value: 'responsibility'}
   ];
 
   const handleFieldChange = (value: string) => {
