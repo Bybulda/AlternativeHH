@@ -35,31 +35,21 @@ const VacancyCard: React.FC<Props> = ({ vacancy, onOpen, onNext }) => {
           vacancyTitle={vacancy.title}
           companyName={vacancy.employer?.name || 'Не указана'}
           onGenerate={async (userInfo: string) => {
-            // Заглушка для вызова бэкенда.
-            // const response = await fetch('http://localhost:8000/api/generate-cover-letter', {
-            //   method: 'POST',
-            //   headers: { 'Content-Type': 'application/json' },
-            //   body: JSON.stringify({
-            //     vacancy_data: {
-            //       title: vacancy.title,
-            //       company: vacancy.employer?.name || 'Не указана',
-            //       requirements: vacancy.requirements || 'Не указаны',
-            //       // ... другие поля
-            //     },
-            //     user_profile: {
-            //       name: 'Пользователь', // можно брать из профиля
-            //       skills: '...', // навыки из профиля
-            //       experience: '...', // опыт из профиля
-            //       education: '...', // образование из профиля
-            //     },
-            //     user_input: userInfo,
-            //   }),
-            // });
-            // const data = await response.json();
-            // return data.cover_letter;
-
-            // Покафейковый ответ для демонстрации
-            return `Здравствуйте!\n\nМеня заинтересовала вакансия "${vacancy.title}" в компании "${vacancy.employer?.name || 'Не указана'}". ${userInfo}\n\nБуду рад обсудить возможности сотрудничества.`;
+            const response = await fetch('http://localhost:8000/coverLetter', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                vacancy_data: {
+                  title: vacancy.title,
+                  company: vacancy.employer?.name || 'Не указана',
+                  requirements: vacancy.requirements || 'Не указаны',
+                  responsibility: vacancy.responsibility || "Не указаны"
+                },
+                user_input: userInfo,
+              }),
+            });
+            const data = await response.json();
+            return data.cover_letter;
           }}
         />
         <button onClick={onNext} style={styles.nextButton}>▶ Следующая вакансия</button>

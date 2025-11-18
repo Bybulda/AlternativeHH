@@ -6,6 +6,7 @@ class Currency(BaseModel):
     code: Optional[str] = None
     name: Optional[str] = None
 
+
 class Employer(BaseModel):
     id: str
     name: str
@@ -35,3 +36,10 @@ class Vacancy(BaseModel):
     url: str
 
 
+class CoverLetterRequest(BaseModel):
+    vacancy_data: dict
+    user_input: str
+
+
+class CoverLetterResponse(BaseModel):
+    cover_letter: str
